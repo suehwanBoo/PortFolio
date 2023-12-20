@@ -1,5 +1,6 @@
 <template>
   <div>
+
     <br>
     <button
     @click="showCalendar"
@@ -47,8 +48,9 @@ function showCalendar(){
   }
 const px = ref('0px')
 const calMouse = ref({'border': px.value})
-
 const date = new Date();
+const now = date.getDate()
+
 const todayMonth = ref(date.getMonth().valueOf()+1)
 console.log(date.getMonth())
 const todayYear = ref(date.getFullYear().valueOf())
@@ -89,7 +91,7 @@ const prev = function(){
     todayMonth.value = 12
     todayYear.value -=1
   }
-  
+  checkToday()
 }
 const next = function(){
   todayMonth.value += 1
@@ -97,14 +99,35 @@ const next = function(){
     todayMonth.value = 1
     todayYear.value += 1
   }
+  checkToday()
+}
+const checkToday = function(){
+  setTimeout(()=>{
+    const days = document.querySelectorAll('#day')
+
+  if(todayMonth.value==date.getMonth()+1 && todayYear.value == date.getFullYear()){
+    for(let i=0; i<days.length;i++){
+      if(+days[i].innerHTML===date.getDate())
+      days[i].classList.toggle('changeDay')
+    }
+  }
+  else{
+    for(let i=0; i<days.length;i++){
+      days[i].classList.remove('changeDay')
+    }
+  }
+  },100)
+ 
+  
 }
 onMounted(()=>{
   showMonth()
+  checkToday()
   watch(todayMonth,(newValue,oldValue)=>{
     nowMonthStart.value = new Date(todayYear.value,todayMonth.value-1,1)
     nowMonthEnd.value = new Date(todayYear.value,todayMonth.value,0)
     showMonth()
-
+    
   })})
 
 </script>
@@ -158,6 +181,10 @@ onMounted(()=>{
   font-size: 13px;
   
 }
+.changeDay{
+  color: yellow;
+}
+
 table{
   border-spacing: 5px;
   text-align: center;
